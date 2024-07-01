@@ -1,0 +1,12 @@
+db:
+  host: "localhost"
+  port: "9930"
+  user: "shop_admin"
+  dbname: "shop"
+  password: "943756924387kgdfjhsk"
+  sslmode: "disable"
+
+server:
+  port: "8080"
+  read_timeout: 2000 # millisecond
+  write_timeout: 2000 # millisecond
