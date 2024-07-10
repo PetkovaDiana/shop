@@ -6,7 +6,7 @@ CREATE TABLE client
     name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     number BIGINT NOT NULL,
-    password TEXT NOT NULL,
+    password BYTEA NOT NULL,
     email TEXT NOT NULL
 );
 

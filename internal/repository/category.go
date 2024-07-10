@@ -1,38 +1,68 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/Masterminds/squirrel"
+	"github.com/PetkovaDiana/shop/internal/repository/entities"
 	domainModels "github.com/PetkovaDiana/shop/internal/service/models"
-	"github.com/jmoiron/sqlx"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 )
 
 type category struct {
-	db *sqlx.DB
+	db *pgxpool.Pool
 }
 
-func NewCategoryRepo(db *sqlx.DB) Category {
+func NewCategoryRepo(db *pgxpool.Pool) Category {
 	return &category{db: db}
 }
 
-func (c *category) GetAllCategories() ([]domainModels.GetAllCategories, error) {
-	var categories []domainModels.GetAllCategories
+func (c *category) GetAllCategories(ctx context.Context, categoriesIDs []int64) ([]*domainModels.GetAllCategories, error) {
+	categories := make([]*domainModels.GetAllCategories, 0, len(categoriesIDs))
 
-	query := fmt.Sprintf(`
-		SELECT 
-		    c.id, 
-		    c.title, 
-		    COUNT(p.*) AS products_count 
-		FROM category c
-    		INNER JOIN product p on c.id = p.category_id
-		GROUP BY c.id 
-		ORDER BY c.id;`)
+	query := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).
+		Select(
+			fmt.Sprintf("c.%s, c.%s, COUNT(p.*)",
+				entities.Failed_Category_ID,
+				entities.Failed_Category_title,
+			),
+		).
+		From(fmt.Sprintf("%s AS c", entities.Table_Category)).
+		InnerJoin("product p on c.id = p.category_id").
+		GroupBy(fmt.Sprintf("c.%s", entities.Failed_Category_ID)).
+		OrderBy(fmt.Sprintf("c.%s", entities.Failed_Category_ID))
 
-	err := c.db.Select(&categories, query)
+	if len(categoriesIDs) != 0 {
+		query = query.Where(squirrel.Eq{fmt.Sprintf("c.%s", entities.Failed_Category_ID): categoriesIDs})
+	}
+
+	q, p, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := c.db.Query(ctx, q, p...)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, errors.New("not a found")
+		return nil, errors.New("categories not found")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		category := new(domainModels.GetAllCategories)
+		err = rows.Scan(&category.ID, &category.Name, &category.ProductsCount)
+		if err != nil {
+			log.Println(err.Error())
+			return nil, errors.New("error scanning row")
+		}
+		categories = append(categories, category)
+	}
+
+	if rows.Err() != nil {
+		log.Println(rows.Err().Error())
+		return nil, errors.New("error with rows iteration")
 	}
 
 	return categories, nil

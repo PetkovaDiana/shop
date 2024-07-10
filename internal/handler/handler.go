@@ -9,6 +9,7 @@ import (
 
 const (
 	basePath = "/api"
+	authApi  = basePath + "/auth"
 )
 
 type Handler struct {
@@ -23,6 +24,9 @@ func (h *Handler) InitRoutes() *http.ServeMux {
 	mx := http.NewServeMux()
 
 	mx.HandleFunc(fmt.Sprintf("%s/get-categories", basePath), h.baseHandler(h.GetCategories)) // Get
+	mx.HandleFunc(fmt.Sprintf("%s/get-products", basePath), h.baseHandler(h.GetProducts))     // Get
+	mx.HandleFunc(fmt.Sprintf("%s/sing-in", authApi), h.baseHandler(h.signIn))
+	mx.HandleFunc(fmt.Sprintf("%s/sing-up", authApi), h.baseHandler(h.signUp))
 
 	return mx
 }

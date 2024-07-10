@@ -2,31 +2,30 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
+	domainModels "github.com/PetkovaDiana/shop/internal/service/models"
 	"net/http"
 )
 
 func (h *Handler) GetCategories(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	category, err := h.services.Category.GetAllCategory()
+	var data domainModels.GetCategoriesFilter
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		http.Error(w, "bla bla bla", http.StatusBadRequest)
+		return
+	}
+
+	// Вызываем метод GetCategory с полученными ID категорий
+	categories, err := h.services.Category.GetCategory(r.Context(), data)
 	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "", http.StatusBadRequest)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	resp, err := json.Marshal(category)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Failed to encode category", http.StatusBadRequest)
-		return
-	}
-
+	// Кодируем результат в JSON и отправляем обратно клиенту
 	w.Header().Set("Content-Type", "text/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	json.NewEncoder(w).Encode(categories)
 }

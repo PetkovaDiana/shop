@@ -10,3 +10,9 @@ server:
   port: "8080"
   read_timeout: 2000 # millisecond
   write_timeout: 2000 # millisecond
+
+password_hash:
+  time: 2
+  memory: 65536 # KiB
+  threads: 2
+  key_len: 32

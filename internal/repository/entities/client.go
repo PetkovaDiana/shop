@@ -11,10 +11,10 @@ const (
 )
 
 type Client struct {
-	ID       int64  `db:"id"`
-	Name     string `db:"name"`
-	LastName string `db:"last_name"`
-	Number   string `db:"number"`
-	Password []byte `db:"password"`
-	Email    string `db:"email"`
+	ID             int64  `db:"id"`
+	Name           string `db:"name"`
+	LastName       string `db:"last_name"`
+	Number         int    `db:"number"`
+	PasswordHashed []byte `db:"password_hash"`
+	Email          string `db:"email"`
 }

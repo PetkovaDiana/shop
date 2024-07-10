@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/PetkovaDiana/shop/internal/pkg/psql"
+	"github.com/PetkovaDiana/shop/internal/pkg/pgx"
 	"github.com/PetkovaDiana/shop/internal/server"
+	"github.com/PetkovaDiana/shop/internal/service"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
 	"os"
@@ -13,8 +14,9 @@ const (
 )
 
 type App struct {
-	ServerConfig *server.Config `yaml:"server"`
-	DBConfig     *psql.Config   `yaml:"db"`
+	ServerConfig *server.Config     `yaml:"server"`
+	DBConfig     *pgx.Config        `yaml:"db"`
+	ItemsArgon   service.ItemsArgon `yaml:"password_hash"`
 }
 
 func NewAppConfig() (*App, error) {

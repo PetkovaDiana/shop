@@ -3,9 +3,10 @@ package entities
 const (
 	Table_Product              = "product"
 	Failed_Product_ID          = "id"
-	Failed_Product_title       = "title"
-	Failed_Product_description = "description"
-	Failed_Product_price       = "price"
+	Failed_Product_Title       = "title"
+	Failed_Product_Description = "description"
+	Failed_Product_Price       = "price"
+	Faile_Category_id          = "category_id"
 )
 
 type Product struct {
