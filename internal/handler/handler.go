@@ -25,8 +25,9 @@ func (h *Handler) InitRoutes() *http.ServeMux {
 
 	mx.HandleFunc(fmt.Sprintf("%s/get-categories", basePath), h.baseHandler(h.GetCategories)) // Get
 	mx.HandleFunc(fmt.Sprintf("%s/get-products", basePath), h.baseHandler(h.GetProducts))     // Get
-	mx.HandleFunc(fmt.Sprintf("%s/sing-in", authApi), h.baseHandler(h.signIn))
-	mx.HandleFunc(fmt.Sprintf("%s/sing-up", authApi), h.baseHandler(h.signUp))
+	mx.HandleFunc(fmt.Sprintf("%s/sing-in", authApi), h.baseHandler(h.signIn))                //Post
+	mx.HandleFunc(fmt.Sprintf("%s/sing-up", authApi), h.baseHandler(h.signUp))                // Post
+	mx.HandleFunc(fmt.Sprintf("%s/basket", authApi), h.baseHandler(h.basket))                 // Post
 
 	return mx
 }
