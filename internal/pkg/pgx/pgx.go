@@ -15,7 +15,7 @@ type Config struct {
 	User     string `yaml:"user"`
 	DBName   string `yaml:"dbname"`
 	Password string `yaml:"password"`
-	SSLMode  string `yaml:"sslmode"`
+	SSLMode  string `yaml:"SSLmode"`
 }
 
 func NewDB(ctx context.Context, cfg *Config, maxAttempts int) (pool *pgxpool.Pool, err error) {
